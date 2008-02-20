@@ -1,6 +1,6 @@
 === Plugin Name ===
 Contributors: michelem
-Donate link: http://www.michelem.org/
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=michele%40befree%2eit&item_name=WassUp&no_shipping=0&no_note=1&tax=0&currency_code=EUR&lc=IT&bn=PP%2dDonationsBF&charset=UTF%2d8
 Tags: technorati, incoming, links, rss, feed, backlink, links
 Requires at least: 2.3
 Tested up to: 2.3
