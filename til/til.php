@@ -4,7 +4,7 @@
 Plugin Name: TIL Technorati Incoming Links
 Plugin URI: http://www.michelem.org/wordpress-plugin-til-technorati-incoming-links/
 Description: In Wordpress 2.3 the Technorati Incoming Links has been replaced with Google Blog Search, now you can add it again with this plugin.
-Version: 1.0
+Version: 1.1
 Author: Michele Marcucci
 Author URI: http://www.michelem.org/
 
@@ -17,11 +17,20 @@ $defaultdata = array(
 	'til_links' => "10",
 	);
 
-
-add_action('activity_box_end', 'til');
+if (version_compare($wp_version, '2.7', '<')) {
+	add_action('activity_box_end', 'til');
+} else {
+	function til_dashboard_widget_function() {
+		til();
+	} 
+	function til_add_dashboard_widgets() {
+		wp_add_dashboard_widget('til_dashboard_widget', 'Technorati Incoming Links', 'til_dashboard_widget_function');	
+	} 
+	add_action('wp_dashboard_setup', 'til_add_dashboard_widgets' );
+}
 
 function til() {
-	global $defaultdata, $til_settings;
+	global $defaultdata, $til_settings, $wp_version;
 	if (!function_exists('MagpieRSS')) { // Check if another plugin is using RSS, may not work
 		include_once (ABSPATH . WPINC . '/rss.php');
 		error_reporting(E_ERROR);
@@ -29,7 +38,11 @@ function til() {
 	$home = get_option("home");
 	$rss = @fetch_rss('http://feeds.technorati.com/cosmos/rss/?url='.$home.'/');
 	if ( isset($rss->items) && 1 < count($rss->items) ) { // Technorati returns a 1-item feed when it has no results
-		print '<h3>Technorati Links <cite><a href="http://www.technorati.com/search/'.$home.'?partner=wordpress">More &raquo;</a></cite></h3><ul>';
+		if (version_compare($wp_version, '2.7', '<')) {
+			print '<h3>Technorati Links <cite><a href="http://www.technorati.com/search/'.$home.'?partner=wordpress">More &raquo;</a></cite></h3><ul>';
+		} else {
+			print '<p><cite><a href="http://www.technorati.com/search/'.$home.'?partner=wordpress">More &raquo;</a></p></cite><ul>';
+		}
 		if ($til_settings['til_links'] != '') {
 			$til_links = $til_settings['til_links'];
 		} else {
@@ -85,5 +98,4 @@ function til_options_subpanel()
         </div>
 	<?php
 }
-	//add_action('admin_footer', 'noff_warning');
 ?>
